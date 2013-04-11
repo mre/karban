@@ -1,30 +1,32 @@
-# Karban - A fork of Markdown Invoice
+![Karban](https://raw.github.com/mre/karban/master/assets/karban.png)
 
 I hate accounting, especially invoicing. It's a repetitive, mind-boggling task, that steals away my energy; thus should be
 handled by a machine. Believe me, I would give my pinky toe if I never ever had to do it again.
 At most I just want to scribble a few notes and be done with it.
-Maybe Tyler King hat the same thoughts while he created Markdown Invoice to solve the problem.
+Maybe Tyler King hat the same thoughts while he created [Markdown Invoice][] to solve the problem.
 It turns Markdown invoices into HTML or PDF.
-Of course his tool is totally rad, so I borrowed it and adjusted it to my own needs and gave birth to Karban.
+Of course his tool is totally rad, so I borrowed it and adjusted it to my own needs.
+This somehow grew out of my hand and I added a bunch of features and gave it a new name - karban.
 Karban is a hacker-friendly, static invoice generator. It's kinda like Jekyll, but for invoices.
 
 ## How?
 
-Simply put your invoices into the `invoices/` directory.
+Simple. Put your invoices into the `invoices/` directory.
 See `sample.md` for an example invoice in Markdown and its PDF output.
 
 ## Example run:
 
 ```bash
-./karban --invoice="invoices/2012-01-14-xxx" --output=pdf --layout="layouts/unicorns.html"
-Compiling invoice "invoices/2012-01-14-xxx"...
-PDF saved to: invoices/2012-01-14-xxx.pdf
+./karban --invoice="invoices/2424-11-04-xxx" --output=pdf --layout="layouts/unicorns.html"
+Compiling invoice "invoices/2424-11-04-xxx"...
+PDF saved to: invoices/2424-11-04-xxx.pdf
 ```
 
 ## Features
 
 * PDF output
 * Fancy HTML/CSS invoice layouts using Twig
+* Meta data using a YAML-FrontMatter
 * Completely adaptable to your own workflow
 * Keep a plain text version of your invoices; text files are awesome.
 
@@ -65,7 +67,7 @@ curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 
 #### Step 4: Download Karban
-git clone .......
+git clone https://github.com/mre/karban.git
 
 #### Step 5: Go into the Karban folder and run composer
 cd karban && composer install
@@ -74,6 +76,10 @@ cd karban && composer install
 
 All credits go to Tyler King who created the original Markdown Invoice.
 
-## Todo
+## Note
 
 At the moment you have to fiddle around with the page breaks when things go awry. That's a known issue caused by wkhtmltopdf. Yeah, it sucks; the only alternative might be to look for an alternative or wait for a proper fix since all the available hacks are messy. For the time being, you can use ```<div class="pagebreak"></div>``` anywhere in your markdown invoice to force a page break.
+
+
+
+[Markdown Invoice]: https://github.com/tyler-king/markdown-invoice
