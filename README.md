@@ -88,7 +88,7 @@ At the moment you have to fiddle around with the page breaks when things go awry
 
 
 [Jekyll]: https://github.com/mojombo/jekyll
-[Taylor King]: https://github.com/tyler-king
+[Tyler King]: https://github.com/tyler-king
 [Markdown Invoice]: https://github.com/tyler-king/markdown-invoice
 [Twig]: http://twig.sensiolabs.org
 [YAML FrontMatter]: https://github.com/Blaxus/YAML-FrontMatter
