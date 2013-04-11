@@ -1,4 +1,4 @@
-![Karban](https://raw.github.com/mre/karban/master/assets/karban.png)
+![Karban](https://raw.github.com/mre/karban/master/assets/karban_small.png)
 
 I hate accounting, especially invoicing. It's a repetitive, mind-boggling task, that steals away my energy; thus should be
 handled by a machine. Believe me, I would give my pinky toe if I never ever had to do it again.
@@ -24,11 +24,12 @@ PDF saved to: invoices/2424-11-04-xxx.pdf
 
 ## Features
 
+* Fancy HTML/CSS invoice layouts (with separate headers and footers) using Twig
 * PDF output
-* Fancy HTML/CSS invoice layouts using Twig
-* Meta data using a YAML-FrontMatter
-* Completely adaptable to your own workflow
+* Meta data using PHP-FrontMatter
+* Multiple layouts
 * Keep a plain text version of your invoices; text files are awesome.
+* Completely adaptable to your own workflow
 
 ```bash
 ./karban --help

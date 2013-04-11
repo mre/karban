@@ -5,6 +5,22 @@
     <link rel="stylesheet" type="text/css" href="../layouts/style.css">
   </head>
   <body>
-{{ content | markdown}}
+
+  <table class="meta simple smallfont">
+  {% for key, val in metadata %}
+    <tr>
+      <td align="right">
+        <strong>{{ key }}:</strong>
+      </td>
+      <td>
+        {{ val }}
+      </td>
+    </tr>
+  {% endfor %}
+  </table>
+
+  {{ content | markdown}}
+
+
   </body>
 </html>
