@@ -1,4 +1,12 @@
 composer.lock
 vendor/
 output/*
-invoices/*/*
+invoices/*
+!invoices/sample.md
+!invoices/sample.html
+!invoices/sample.pdf
+.DS_Store
+layouts/*
+!layouts/layout.html
+!layouts/style.css
+!layouts/pdf.css

@@ -1,0 +1,183 @@
+#!/usr/bin/env php
+<?php
+
+if ((! @include __DIR__.'/../../../autoload.php') && (! @include __DIR__.'/../vendor/autoload.php')) {
+    die('You must set up the project dependencies, run the following commands:' . PHP_EOL .
+         'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+         'php composer.phar install' . PHP_EOL
+    );
+}
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
+use dflydev\markdown\MarkdownExtraParser;
+use ForceUTF8\Encoding;
+
+
+require_once('vendor/mikehaertl/phpwkhtmltopdf/WkHtmlToPdf.php');
+require_once('vendor/modularr/yaml-front-matter/frontmatter.php');
+
+
+$console = new Application('Karban', '1.0.0');
+$console
+    ->register('karban')
+    ->addArgument(
+        'invoice',
+        InputArgument::OPTIONAL,
+        'Name of an invoice in Markdown format'
+    )
+    ->addOption(
+        'format',
+        'f',
+        InputOption::VALUE_OPTIONAL,
+        'Format can be HTML or PDF',
+        'pdf'
+    )
+    ->addOption(
+        'output',
+        'o',
+        InputOption::VALUE_OPTIONAL,
+        'Output directory for the generated envoice',
+        null
+    )
+    ->addOption(
+        'layout',
+        'l',
+        InputOption::VALUE_OPTIONAL,
+        'Layout for invoice',
+        'layouts/layout.html'
+    )
+    ->setDescription('Generates HTML versions of a Markdown Invoice.')
+    ->setCode(function(InputInterface $input, OutputInterface $output) use($console) {
+
+        // Load commandline arguments and options
+        $output_format = $input->getOption('format');
+
+        $layout_path = $input->getOption('layout');
+        $layout = basename($layout_path);
+        $layout_dir = dirname($layout_path);
+        //$layout_path = __DIR__.'/../'.$layout;
+
+        $invoice_dir = __DIR__."/../invoices/";
+
+        if ($input->getOption('output')) {
+          $output_dir = __DIR__."/../".$input->getOption('output');
+        } else {
+          $output_dir = $invoice_dir;
+        }
+
+        // Get invoice name and path we're dealing with
+        if ($input->getArgument('invoice')) {
+          // Invoice specified via commandline
+          $invoice_path = $input->getArgument('invoice');
+          $invoice = str_replace(['.md', '.markdown'], '', basename($invoice_path));
+
+        } else {
+          // Get invoice from a dialog
+            $i      = 0;
+            $finder = new Finder;
+            $finder->files()->in($invoice_dir);
+            foreach ($finder as $file) {
+                if (in_array($file->getExtension(), ['md', 'markdown'])) {
+                    $files[$i] = str_replace(['.md', '.markdown'], '', $file->getBasename());
+                    $i++;
+                }
+            }
+
+            $dialog  = $console->getHelperSet()->get('dialog');
+            $invoice = $dialog->select($output, 'Invoice number?', $files, 0);
+
+            $invoice = $files[$invoice];
+            $invoice_path = $invoice_dir.$invoice.'.md';
+
+        }
+
+        $filesystem = new Filesystem;
+        if (! $filesystem->exists($invoice_path)) {
+            $output->writeln("<error>Error: Invoice \"{$invoice_path}\" does not seem to exist.</error>");
+            exit(-1);
+        }
+
+        $output->writeln("<comment>Compiling invoice \"{$invoice_path}\"...</comment>");
+
+        // Generate HTML output
+        $output->writeln("<comment>Using layout \"{$layout_path}\"...</comment>");
+
+        // Parse the markdown invoice...
+        $page = new FrontMatter($invoice_path);
+        $meta = $page->fetch('meta');
+        $content = $page->fetch('content');
+
+        // Load the template
+        $loader = new Twig_Loader_Filesystem($layout_dir);
+        $twig = new Twig_Environment($loader, array('cache' => false));
+
+        // Use Twig Markdown extension
+        $parser = new MarkdownExtraParser;
+        $twig->addExtension(new Aptoma\Twig\Extension\MarkdownExtension($parser));
+
+        $template = $twig->loadTemplate($layout);
+
+        // Put it all together
+        $generated = $template->render(array("content" => $content, "metadata" => $meta));
+        $generated = Encoding::toUTF8($generated);
+        //$generated = str_replace('{{ html }}', $html, $layout);
+
+        // Store the generated invoice
+        $save_path = $output_dir."/".$invoice.'.html';
+
+        $save_dir = dirname($save_path);
+        if (! $filesystem->exists($save_dir)) {
+            $output->writeln("<error>Error: Directory \"{$save_dir}\" does not seem to exist.</error>");
+            exit(-1);
+        } else {
+          file_put_contents($save_path, $generated);
+        }
+
+        // Generate PDF output
+        if ($output_format ==  'pdf') {
+            $pdf_save_path = substr_replace($save_path, 'pdf', strlen($save_path)-4, 4);
+
+            // Configure and start wkhtmltopdf.
+            // This program is an ugly beast. It might be the best in town, but it still sucks. 
+            // Various hacks need to be applied to make this working:
+            // "Allow" a folder to be used for file input? Huh?
+            // Set a negative footer spacing to make the footer visible
+
+            // Start wkhtmltopdf in a separate process.
+            // Here's the Unix way of doing things. 
+            //$process = new Process("wkhtmltopdf --no-background --print-media-type --allow layouts --footer-spacing -5 --footer-html layouts/footer.html {$save_path} {$pdf_save_path} ");
+            //$process->run();
+            //if (! $process->isSuccessful()) {
+            //    throw new \RuntimeException($process->getErrorOutput());
+            //}
+            //
+            $pdf = new WkHtmlToPdf(array(
+                'bin' => "wkhtmltopdf",
+                'no-outline',         // Make Chrome not complain
+                'margin-top'    => 10,
+                'margin-right'  => 0,
+                'margin-bottom' => 5,
+                'margin-left'   => 15 
+            ));
+
+            $pdf->setPageOptions(array(
+                'disable-smart-shrinking',
+                'user-style-sheet' => 'layouts/pdf.css', // A special stylesheet that fixes some wkhtmltopdf bugs
+            ));
+            $pdf->addPage($save_path);
+            $pdf->saveAs($pdf_save_path);
+
+
+            $output->writeln("<info>PDF saved to \"{$pdf_save_path}\"</info>");
+        } else {
+            $output->writeln("<info>HTML saved to \"{$save_path}\"</info>");
+        }
+    });
+$console->run();

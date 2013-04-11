@@ -1,0 +1,25 @@
+/*
+A special print layout for wkhtmltopdf
+*/
+
+
+/* Define page size. Requires print-area adjustment! */
+body {
+    margin:     0;
+    padding:    0;
+    width:      21cm;
+    height:     29.7cm;
+}
+
+/* Printable area */
+#print-area {
+    position:   relative;
+    top:        0;
+    left:       0;
+    width:      15cm;
+}
+
+.pagebreak { 
+  page-break-after: always;
+}
+

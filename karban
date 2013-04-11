@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# A simple wrapper for bin/karban-cli
+./bin/karban-cli karban "$@"

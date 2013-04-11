@@ -1,28 +1,45 @@
-# Markdown Invoice
+# Karban - A fork of Markdown Invoice
 
-This is a simple Symfony console application that I use to turn Markdown invoices into HTML or PDF.
+I hate accounting, especially invoicing. It's a repetitive, mind-boggling task, that steals away my energy; thus should be
+handled by a machine. Believe me, I would give my pinky toe if I never ever had to do it again.
+At most I just want to scribble a few notes and be done with it.
+Maybe Tyler King hat the same thoughts while he created Markdown Invoice to solve the problem.
+It turns Markdown invoices into HTML or PDF.
+Of course his tool is totally rad, so I borrowed it and adjusted it to my own needs and gave birth to Karban.
+Karban is a hacker-friendly, static invoice generator. It's kinda like Jekyll, but for invoices.
 
+## How?
 
-## Setup
+Simply put your invoices into the `invoices/` directory.
+See `sample.md` for an example invoice in Markdown and its PDF output.
 
-Simply create your invoice folders under `invoices/` directory. Example: paid, unpaid, estimates. A recommended file 
-naming format is `[YYYY]-[MM]-[DD]-[project].md` (2013-01-15-github.md).
-
-See `sample/` dirctory for an example invoice in Markdown and it's PDF output when generated.
-
-## Useage
+## Example run:
 
 ```bash
-bin/markdown-invoice generate --help
+./karban --invoice="invoices/2012-01-14-xxx" --output=pdf --layout="layouts/unicorns.html"
+Compiling invoice "invoices/2012-01-14-xxx"...
+PDF saved to: invoices/2012-01-14-xxx.pdf
+```
+
+## Features
+
+* PDF output
+* Fancy HTML/CSS invoice layouts using Twig
+* Completely adaptable to your own workflow
+* Keep a plain text version of your invoices; text files are awesome.
+
+```bash
+./karban --help
 Usage:
- generate [--output[="..."]] src [invoice]
+ karban [-f|--format[="..."]] [-o|--output[="..."]] [-l|--layout[="..."]] [invoice]
 
 Arguments:
- src                   Location of invoice; ex: "paid", "unpaid"
- invoice               What invoice to generate for?
+ invoice               Name of an invoice in Markdown format
 
 Options:
- --output              Output to format; html or pdf (default: "html")
+ --format (-f)         Format can be HTML or PDF (default: "pdf")
+ --output (-o)         Output directory for the generated envoice
+ --layout (-l)         Layout for invoice (default: "layouts/layout.html")
  --help (-h)           Display this help message.
  --quiet (-q)          Do not output any message.
  --verbose (-v)        Increase verbosity of messages.
@@ -32,23 +49,31 @@ Options:
  --no-interaction (-n) Do not ask any interactive question.
 ```
 
-Example run:
+## Installation
 
-```bash
-bin/markdown-invoice generate unpaid --output=pdf
-Please choose an invoice in "unpaid"...
+### Instructions for Mac
 
-1. 2012-01-15-xxxx.md
-2. 2012-01-14-xxx.md
-Which invoice? 2
+#### Step 1: Karban requires PHP 5.4 or higher. If you have an older version of PHP make an upgrade
+curl -s http://php-osx.liip.ch/install.sh | bash -s 5.4
 
-Generating for invoice "2012-01-14-xxx"...
+#### Step 2: Make PHP 5.4 to your standard distribution
+export PATH=/usr/local/php5/bin:$PATH
+(write this into your ~/.profile to make it permament)
 
-Invoice generated.
-PDF saved to: output/2012-01-14-xxx.pdf
-```
+#### Step 3: Install composer
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
 
-## Requirements
+#### Step 4: Download Karban
+git clone .......
 
-- [PHP](http://php.net) 5.4.x
-- [wkhtmltopdf](http://code.google.com/p/wkhtmltopdf/)
+#### Step 5: Go into the Karban folder and run composer
+cd karban && composer install
+
+## Credits
+
+All credits go to Tyler King who created the original Markdown Invoice.
+
+## Todo
+
+At the moment you have to fiddle around with the page breaks when things go awry. That's a known issue caused by wkhtmltopdf. Yeah, it sucks; the only alternative might be to look for an alternative or wait for a proper fix since all the available hacks are messy. For the time being, you can use ```<div class="pagebreak"></div>``` anywhere in your markdown invoice to force a page break.
