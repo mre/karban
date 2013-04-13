@@ -1,13 +1,17 @@
 {
-    "name": "tyler-king/markdown-invoice",
+    "name": "mre/karban",
     "type": "bin",
-    "description": "Generates HTML version of my invoices for clients.",
-    "keywords": ["invoice", "markdown"],
+    "description": "Generate HTML and PDF invoices from Markdown. Jekyll for invoices",
+    "keywords": ["invoice", "markdown", "html", "pdf", "generator"],
     "license": "MIT",
     "authors": [
         {
             "name": "Tyler King",
             "email": "tyler.king@newfie.co"
+        },
+        {
+            "name": "Matthias Endler",
+            "email": "matthias-endler.de"
         }
     ],
     "require": {

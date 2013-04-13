@@ -28,7 +28,7 @@ PDF saved to: invoices/2424-11-04-xxx.pdf
 * PDF output
 * Meta data using [YAML FrontMatter][]
 * Multiple layouts
-* Keep a plain text version of your invoices; text files are awesome.
+* Keep a plain text version of your invoices. Text files are [awesome][].
 * Completely adaptable to your own workflow
 
 ```bash
@@ -60,7 +60,7 @@ Options:
 
      curl -s http://php-osx.liip.ch/install.sh | bash -s 5.4
 
-#### Step 2: Make PHP 5.4 to your standard distribution
+#### Step 2: Make PHP 5.4 your standard distribution
 
      export PATH=/usr/local/php5/bin:$PATH
      (write this into your ~/.profile to make it permament)
@@ -92,3 +92,4 @@ At the moment you have to fiddle around with the page breaks when things go awry
 [Markdown Invoice]: https://github.com/tyler-king/markdown-invoice
 [Twig]: http://twig.sensiolabs.org
 [YAML FrontMatter]: https://github.com/Blaxus/YAML-FrontMatter
+[awesome]: http://matthias-endler.de/2010/why-i-love-text-files/

@@ -111,7 +111,7 @@ $console
 
         // Parse the markdown invoice...
         $page = new FrontMatter($invoice_path);
-        $meta = $page->fetch('meta');
+        $meta = $page->fetchKeys();
         $content = $page->fetch('content');
 
         // Load the template
